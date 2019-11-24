@@ -1,0 +1,70 @@
+---
+- name: include role docker_exam
+  include_role:
+   name: docker_exam
+
+- name: get ip from 1st container
+  become: true
+  become_method: sudo
+  shell: "docker inspect --format '{''{.NetworkSettings.IPAddress}''}' web1"
+  register: webapp_ip1
+- set_fact:
+   webapp_ip1: "{{ webapp_ip1.stdout }}"
+
+- name: get ip from 2nd container
+  become: true
+  become_method: sudo
+  shell: "docker inspect --format '{''{.NetworkSettings.IPAddress}''}' web2"
+  register: webapp_ip2
+- set_fact:
+   webapp_ip2: "{{ webapp_ip2.stdout }}"
+
+- name: get ip from 3rd container
+  become: true
+  become_method: sudo
+  shell: "docker inspect --format '{''{.NetworkSettings.IPAddress}''}' web3"
+  register: webapp_ip3
+- set_fact:
+   webapp_ip3: "{{ webapp_ip3.stdout }}"
+
+- name: create directory for nginx.conf
+  become: true
+  become_method: sudo
+  file:
+   path: /var/local/nginx
+   state: directory
+
+- name: render nginx.conf
+  become: yes
+  become_method: sudo
+  template:
+   src: nginx.conf.j2
+   dest: /var/local/nginx/nginx.conf
+
+- name: run container nginx_balancer
+  become: true
+  become_method: sudo
+#  shell: 'docker run -d -p "{{ container_port }}":80 -v /var/local/nginx/nginx.conf:/etc/nginx --name=nginx_balancer nginx:latest'
+  docker_container:
+   name: "{{ container }}"
+   hostname: "{{ container }}"
+   state: present
+   image: nginx:alpine
+   ports: "{{ container_port }}:80"
+#   volumes:
+#    - /var/local/nginx/nginx.conf:/etc/nginx/
+   networks:
+    - name: wow_network
+
+- name: copy nginx.conf
+  become: true
+  become_method: sudo
+  shell: "docker cp /var/local/nginx/nginx.conf '{{ container }}':/etc/nginx/nginx.conf"
+
+#- name: start/restart nginx container
+#  become: true
+#  become_method: sudo
+#  docker_container:
+#    name: "{{ container }}"
+#    state: started
+#    restart: yes
