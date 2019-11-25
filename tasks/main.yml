@@ -48,7 +48,7 @@
   docker_container:
    name: "{{ container }}"
    hostname: "{{ container }}"
-   state: present
+   state: started
    image: nginx:alpine
    ports: "{{ container_port }}:80"
 #   volumes:
@@ -61,7 +61,7 @@
   become_method: sudo
   shell: "docker cp /var/local/nginx/nginx.conf '{{ container }}':/etc/nginx/nginx.conf"
 
-#- name: start/restart nginx container
+#- name: restart nginx container
 #  become: true
 #  become_method: sudo
 #  docker_container:
