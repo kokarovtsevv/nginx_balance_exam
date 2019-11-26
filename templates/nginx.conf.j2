@@ -33,6 +33,9 @@ http {
 
         location / {
             proxy_pass http://backend;
+            proxy_connect_timeout 300;
+            proxy_send_timeout    300;
+            proxy_read_timeout    300;
        }
     }
 }
