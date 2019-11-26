@@ -54,7 +54,7 @@
 #   volumes:
 #    - /var/local/nginx/nginx.conf:/etc/nginx/
 #   networks:
-#    - name: wow_network
+#    - name: wow_network 
 
 - name: copy nginx.conf
   become: true
