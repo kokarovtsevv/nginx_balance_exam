@@ -1,12 +1,12 @@
 ---
-- name: include role docker_exam
-  include_role:
-   name: docker_exam
+#- name: include role docker_exam
+#  include_role:
+#   name: docker_exam
 
 - name: get ip from 1st container
   become: true
   become_method: sudo
-  shell: "docker inspect --format '{''{.NetworkSettings.IPAddress}''}' web1" 
+  shell: "docker inspect --format '{''{.NetworkSettings.Networks.wow_network.IPAddress}''}' web1" 
   register: webapp_ip1
 - set_fact:
    webapp_ip1: "{{ webapp_ip1.stdout }}"
@@ -14,7 +14,7 @@
 - name: get ip from 2nd container
   become: true
   become_method: sudo
-  shell: "docker inspect --format '{''{.NetworkSettings.IPAddress}''}' web2"
+  shell: "docker inspect --format '{''{.NetworkSettings.Networks.wow_network.IPAddress}''}' web2"
   register: webapp_ip2
 - set_fact:
    webapp_ip2: "{{ webapp_ip2.stdout }}"
@@ -22,7 +22,7 @@
 - name: get ip from 3rd container
   become: true
   become_method: sudo
-  shell: "docker inspect --format '{''{.NetworkSettings.IPAddress}''}' web3"
+  shell: "docker inspect --format '{''{.NetworkSettings.Networks.wow_network.IPAddress}''}' web3"
   register: webapp_ip3
 - set_fact:
    webapp_ip3: "{{ webapp_ip3.stdout }}"
@@ -53,8 +53,8 @@
    ports: "{{ container_port }}:80"
 #   volumes:
 #    - /var/local/nginx/nginx.conf:/etc/nginx/
-#   networks:
-#    - name: wow_network
+   networks:
+    - name: wow_network
 
 - name: copy nginx.conf
   become: true
