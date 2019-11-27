@@ -22,16 +22,15 @@ http {
     sendfile        on;
     keepalive_timeout  65;
     
+    
+    server {
+        listen 80;
+        location / {
     upstream localhost{
         server {{ webapp_ip1 }}:5000;
         server {{ webapp_ip2 }}:5000;
         server {{ webapp_ip3 }}:5000;
-    }
-
-    server {
-        listen 80;
-        location / {
-            
+    }        
                         proxy_set_header Host $host;                          
                         proxy_set_header X-Real-IP $remote_addr;                        
                         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;                          
