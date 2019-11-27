@@ -22,7 +22,7 @@ http {
     sendfile        on;
     keepalive_timeout  65;
     
-    upstream backend {
+    upstream localhost{
         server {{ webapp_ip1 }}:5000;
         server {{ webapp_ip2 }}:5000;
         server {{ webapp_ip3 }}:5000;
@@ -30,12 +30,13 @@ http {
 
     server {
         listen 80;
-
         location / {
-            proxy_pass http://backend;
-            proxy_connect_timeout 300;
-            proxy_send_timeout    300;
-            proxy_read_timeout    300;
+            
+                        proxy_set_header Host $host;                          
+                        proxy_set_header X-Real-IP $remote_addr;                        
+                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;                          
+                        proxy_pass http://localhost;
+                        proxy_redirect http://{{ webapp_ip1 }}:5000 http://{{ webapp_ip2 }}:5000 http:// {{ webapp_ip3 }}:5000;
        }
     }
 }
