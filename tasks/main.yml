@@ -41,13 +41,6 @@
    src: nginx.conf.j2
    dest: /var/local/nginx/nginx.conf
 
-- name: index.html
-  become: yes
-  become_method: sudo
-  template:
-   src: index.j2
-   dest: /var/local/nginx/index.html
-
 - name: run container nginx_balancer
   become: true
   become_method: sudo
@@ -67,12 +60,6 @@
   become: true
   become_method: sudo
   shell: "docker cp /var/local/nginx/nginx.conf '{{ container }}':/etc/nginx/nginx.conf"
-
-- name: copy nginx.conf
-  become: true
-  become_method: sudo
-  shell: "docker cp /var/local/nginx/index.html '{{ container }}':/etc/nginx/index.html"
-
 
 #- name: restart nginx container
 #  become: true
